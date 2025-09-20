@@ -13,6 +13,9 @@
 2. ドラフト作成（Canvas）
    - `slide_template.html`をベースに、**許可されたHTMLサブセットのみ**で編集してCanvasに提示。
    - 使用可: `h1/h2/h3`, `p`, `div`, `ul>li`, `img`, `figure>img+figcaption`, `table/thead/tbody/tr/th/td`, `footer`
+   - slide_template.html の <style> と <script> は削除・改変しない。コンテンツ（<article class="slide ..."> 群）のみ編集すること
+   - 最初のスライドには current を付ける
+   - プレビュー崩れの原因になるため、.slide と .slide.current のCSSは必ず保持する
    - 画像はローカルパスまたはdata:URIのみ。URLは使用禁止。
    - 表は列2–8、行1–20を推奨。大きい表は分割。
    - 1つの`.content`は**テキスト+（画像or表）最大1つ**を推奨。
