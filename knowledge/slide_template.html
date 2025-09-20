@@ -1,0 +1,204 @@
+<!-- テンプレートスライドv2.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Business 16:9 Slide Template — v2 (Images & Tables)</title>
+  <style>
+    /* =============================
+       Design Tokens (CSS Variables)
+       ============================= */
+    :root {
+      --brand: #0f3d68; --accent: #2563eb; --bg: #ffffff;
+      --ink: #0b1220; --muted: #6b7280; --line: rgba(15, 61, 104, 0.20);
+      --radius: 18px;
+      --font-sans: "Noto Sans JP", system-ui, -apple-system, "Segoe UI",
+                   "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+      --fs-title-xl: clamp(32px, 6.0vmin, 72px);
+      --fs-title:    clamp(24px, 3.8vmin, 48px);
+      --fs-body:     clamp(15px, 2.1vmin, 28px);
+      --fs-small:    clamp(10px, 1.3vmin, 14px);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-sans); }
+
+    #stage { position: fixed; inset: 0; display: grid; place-items: center; }
+    .deck { position: relative; width: min(96vw, 96vh * 16 / 9); aspect-ratio: 16 / 9; background: var(--bg);
+            border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 12px 48px rgba(0,0,0,.08); overflow: hidden; user-select: none; }
+
+    .slide { position: absolute; inset: 0; display: grid; grid-template-rows: auto 1fr auto; padding: clamp(16px, 3vmin, 40px);
+             opacity: 0; transform: translateX(2%); transition: opacity .28s ease, transform .28s ease; background: var(--bg); }
+    .slide.current { opacity: 1; transform: translateX(0); }
+
+    /* 無地背景（背景画像レイヤーなし） */
+    .slide::before { content: none; }
+    .slide[data-bg]::after { content: none; }
+
+    .header { z-index: 1; display: flex; align-items: flex-end; gap: 12px;
+              min-height: clamp(56px, 10vmin, 120px); padding-bottom: clamp(8px, 1.4vmin, 16px);
+              border-bottom: 1px solid var(--line); }
+    .header .eyebrow { font-size: var(--fs-small); letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+    .header .title { font-size: var(--fs-title); font-weight: 700; letter-spacing: .02em; color: var(--ink); }
+
+    .content { z-index: 1; padding-top: clamp(12px, 2vmin, 24px); font-size: var(--fs-body); line-height: 1.65; }
+    .content.two-col { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(12px, 2vmin, 24px); }
+    .content ul { margin: 0; padding-left: 1.25em; }
+    .content li { margin: .25em 0; }
+    .content figure { margin: 0; }
+    .content figcaption { font-size: var(--fs-small); color: var(--muted); margin-top: .3em; }
+
+    .callout { border: 1px solid var(--line); border-radius: var(--radius);
+               padding: clamp(10px, 1.6vmin, 18px); background: rgba(37,99,235,0.04); }
+
+    .footer { z-index: 1; display: flex; align-items: center; justify-content: space-between;
+              gap: 12px; padding-top: clamp(6px, 1vmin, 12px); border-top: 1px solid var(--line);
+              font-size: var(--fs-small); color: var(--muted); }
+
+    .title-slide { grid-template-rows: 1fr auto; place-items: center; text-align: center; }
+    .title-slide .header { display: none; }
+    .title-slide .hero { z-index: 1; }
+    .title-slide .hero .kicker { font-size: var(--fs-small); letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+    .title-slide .hero .title { font-size: var(--fs-title-xl); font-weight: 800; line-height: 1.15; margin: .2em 0 .3em; }
+    .title-slide .hero .subtitle { font-size: clamp(16px, 2.4vmin, 32px); color: var(--muted); }
+
+    .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(15,61,104,0.10); }
+    .progress > i { display: block; height: 100%; width: 0%; background: var(--accent); transition: width .25s ease; }
+
+    @media print {
+      html, body { background: none; } #stage { display: block; position: static; }
+      .deck { width: 297mm; height: 210mm; aspect-ratio: auto; box-shadow: none; border-radius: 0; }
+      .slide { position: static; page-break-after: always; opacity: 1; transform: none; }
+      .progress { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!--
+    【重要: このテンプレートが GPT→PPTX 変換の“仕様”です】
+    - 使用可能要素: h1/h2/h3, p, div, ul>li, img, figure>img+figcaption, table/thead/tbody/tr/th/td, footer
+    - 画像: ローカルファイル (HTMLと同じフォルダ or サブフォルダ) または data:URI のみ。http/https は不可。
+    - テーブル: 列数 2〜8、行数は 1〜20 を推奨。大きい表は分割スライド推奨。
+    - 混在コンテンツは上から順にレイアウト。長文はクリッピングの可能性があるため簡潔に。
+  -->
+  <main id="stage">
+    <section class="deck" id="deck" aria-live="polite" aria-atomic="true">
+      <article class="slide title-slide current" aria-label="1">
+        <div class="hero">
+          <div class="kicker">Quarterly Business Review</div>
+          <h1 class="title">2025年度 第2四半期<br>事業報告</h1>
+          <p class="subtitle">株式会社サンプル — 経営企画部</p>
+        </div>
+        <footer class="footer">
+          <div>Confidential — Company Internal</div>
+          <div><span class="page-current">1</span> / <span class="page-total">6</span></div>
+        </footer>
+        <div class="progress" aria-hidden="true"><i></i></div>
+      </article>
+
+      <article class="slide" aria-label="2">
+        <header class="header"><div class="eyebrow">Agenda</div><h2 class="title">本日のアジェンダ</h2></header>
+        <section class="content">
+          <ul><li>サマリー（KPI 進捗・ハイライト）</li><li>売上とパイプラインの現状</li><li>プロダクトアップデート</li><li>来期に向けた重点施策</li></ul>
+        </section>
+        <footer class="footer"><div>Confidential — Company Internal</div><div><span class="page-current">2</span> / <span class="page-total">6</span></div></footer>
+        <div class="progress" aria-hidden="true"><i></i></div>
+      </article>
+
+      <article class="slide" aria-label="3">
+        <header class="header"><div class="eyebrow">Highlights</div><h2 class="title">四半期サマリー</h2></header>
+        <section class="content two-col">
+          <div>
+            <ul><li>売上：前年同期比 +18%</li><li>解約率：2.1% → <strong>1.5%</strong> に改善</li><li>NPS：+6pt 上昇（BtoB エンタープライズ）</li><li>大型受注：3 件（製造 / 金融 / 流通）</li></ul>
+            <div class="callout">今期の成功要因：エンタープライズ直販体制の強化と、導入までの<em>リードタイム短縮</em></div>
+          </div>
+          <div>
+            <!-- 画像例: HTML と同じフォルダに images/sales.png を置く -->
+            <figure>
+              <img src="images/sales.png" alt="売上推移（例）">
+              <figcaption>売上推移（四半期、サンプル）</figcaption>
+            </figure>
+          </div>
+        </section>
+        <footer class="footer"><div>Confidential — Company Internal</div><div><span class="page-current">3</span> / <span class="page-total">6</span></div></footer>
+        <div class="progress" aria-hidden="true"><i></i></div>
+      </article>
+
+      <article class="slide" aria-label="4">
+        <header class="header"><div class="eyebrow">Data</div><h2 class="title">KPI スナップショット</h2></header>
+        <section class="content">
+          <!-- テーブル例: thead でヘッダー、tbody でデータ -->
+          <table>
+            <thead>
+              <tr><th>KPI</th><th>今期</th><th>前期</th><th>YoY</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>売上 (百万円)</td><td>1,240</td><td>1,138</td><td>+8.9%</td></tr>
+              <tr><td>粗利率</td><td>62.1%</td><td>59.7%</td><td>+2.4pt</td></tr>
+              <tr><td>解約率</td><td>1.5%</td><td>2.1%</td><td>▲0.6pt</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <footer class="footer"><div>Confidential — Company Internal</div><div><span class="page-current">4</span> / <span class="page-total">6</span></div></footer>
+        <div class="progress" aria-hidden="true"><i></i></div>
+      </article>
+
+      <article class="slide" aria-label="5">
+        <header class="header"><div class="eyebrow">Initiatives</div><h2 class="title">来期 3つの重点</h2></header>
+        <section class="content">
+          <ul><li>製造業向けソリューションのテンプレート化</li><li>パートナー連携の深化（共同セミナー / 提案）</li><li>オンボーディング体験の磨き込み（TTV 短縮）</li></ul>
+          <p class="callout">※ 画像や表は <strong>.content</strong> 内に単独で配置すると綺麗に収まります。混在させる場合は簡潔なテキストに。</p>
+        </section>
+        <footer class="footer"><div>Confidential — Company Internal</div><div><span class="page-current">5</span> / <span class="page-total">6</span></div></footer>
+        <div class="progress" aria-hidden="true"><i></i></div>
+      </article>
+
+      <article class="slide" aria-label="6">
+        <header class="header"><div class="eyebrow">Summary</div><h2 class="title">要点のまとめ</h2></header>
+        <section class="content"><ul><li>収益性と継続率は堅調に改善</li><li>製造業を中心とした勝ち筋が見えた</li><li>来期は再現性の高い型化と TTV 短縮に注力</li></ul></section>
+        <footer class="footer"><div>Confidential — Company Internal</div><div><span class="page-current">6</span> / <span class="page-total">6</span></div></footer>
+        <div class="progress" aria-hidden="true"><i></i></div>
+      </article>
+    </section>
+  </main>
+  <script>
+    const deck = document.getElementById('deck');
+    const slides = Array.from(deck.querySelectorAll('.slide'));
+    const total = slides.length;
+    const ALLOW_HISTORY = (() => { try { if (!history || typeof history.replaceState !== 'function') return false;
+      const href = String(location.href||''); return !/^about:|^blob:|^data:/.test(href); } catch(_) { return false; }})();
+    function clamp(n, min, max){ return Math.max(min, Math.min(n, max)); }
+    function indexFromHash(){ if(!ALLOW_HISTORY) return 1; const n = parseInt(location.hash.replace('#',''), 10); return isNaN(n)?1:clamp(n,1,total); }
+    let current = indexFromHash();
+    function show(i){
+      current = clamp(i, 1, total);
+      slides.forEach((s, idx) => s.classList.toggle('current', idx === current - 1));
+      deck.querySelectorAll('.page-current').forEach(el => el.textContent = String(current));
+      deck.querySelectorAll('.page-total').forEach(el => el.textContent = String(total));
+      const p = deck.querySelector('.slide.current .progress > i'); if(p) p.style.width = (current/total*100).toFixed(2) + '%';
+      const label = deck.querySelector('.slide.current')?.getAttribute('aria-label') || String(current);
+      deck.setAttribute('aria-label', `スライド ${label} / ${total}`);
+      if(ALLOW_HISTORY && location.hash !== '#' + current){ try{ history.replaceState(null, '', '#' + current); }catch(_){} }
+    }
+    function next(){ show(current + 1); }
+    function prev(){ show(current - 1); }
+    document.addEventListener('keydown', (e) => {
+      const k = e.key;
+      if(["ArrowRight","ArrowDown"," ","PageDown"].includes(k)) { e.preventDefault(); next(); }
+      else if(["ArrowLeft","ArrowUp","PageUp"].includes(k)) { e.preventDefault(); prev(); }
+      else if(k === 'Home') { e.preventDefault(); show(1); }
+      else if(k === 'End') { e.preventDefault(); show(total); }
+    });
+    deck.addEventListener('click', (e) => { const tag = (e.target.tagName||'').toLowerCase();
+      if(['a','button','input','textarea','select','code'].includes(tag)) return; next(); });
+    if (ALLOW_HISTORY) { window.addEventListener('hashchange', () => show(indexFromHash())); }
+    function setBackgroundImage(index, url){
+      const s = slides[index - 1]; if(!s) return;
+      s.style.setProperty('--bg-image', 'none');
+      s.removeAttribute('data-bg');
+    }
+    show(current); window.SlideDeck = { show, next, prev, setBackgroundImage };
+  </script>
+</body>
+</html>
